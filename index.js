@@ -2,11 +2,26 @@ const { ApolloServer } = require(`apollo-server`)
 
 // フィールド
 const typeDefs = `
+  enum PhotoCategory {
+    SELFIE
+    PORTRAIT
+    ACTION
+    LANDSCAPE
+    GRAPHIC
+  }
+
   type Photo {
     id: ID!
     url: String!
     name: String!
     description: String!
+    category: PhotoCategory!
+  }
+
+  input PostPhotoInput {
+    name: String!
+    category: PhotoCategory=PORTRAIT
+    description: String
   }
 
   type Query {
@@ -15,10 +30,7 @@ const typeDefs = `
   }
 
   type Mutation {
-    postPhoto(
-      name: String!
-      description: String
-    ): Photo!
+    postPhoto(input: PostPhotoInput!): Photo!
   }
 `
 
@@ -33,7 +45,7 @@ const resolvers = {
   },
   Mutation: {
     postPhoto(parent, args) {
-      let newPhoto = { id: _id++, ...args }
+      let newPhoto = { id: _id++, ...args.input }
       photos.push(newPhoto)
 
       return newPhoto
