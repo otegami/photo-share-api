@@ -1,4 +1,5 @@
-const { ApolloServer } = require(`apollo-server`)
+const { ApolloServer } = require(`apollo-server-express`)
+const express = require(`express`)
 const { GraphQLScalarType } = require(`graphql`)
 
 // フィールド
@@ -136,12 +137,14 @@ const resolvers = {
   })
 }
 
-// 全てのフィールドに対応するリゾルバ関数が必要
-const server = new ApolloServer({
-  typeDefs,
-  resolvers
-})
+const startApolloServer = async (typeDefs, resolvers) => {
+  const server = new ApolloServer({ typeDefs, resolvers })
+  await server.start()
+  const app = express()
+  server.applyMiddleware({ app })
+  app.get(`/`, (req, res) => res.end(`Welcome to the PhotoShareAPI`))
+  await new Promise(resolve => app.listen({ port: 4000 }, resolve))
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+}
 
-server
-  .listen()
-  .then(({url}) => console.log(`GraphQL Service running on ${url}`))
+startApolloServer(typeDefs, resolvers)
