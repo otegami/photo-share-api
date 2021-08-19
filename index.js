@@ -2,6 +2,8 @@ const expressPlayground = require(`graphql-playground-middleware-express`).defau
 const { ApolloServer } = require(`apollo-server-express`)
 const { readFileSync } = require(`fs`)
 const express = require(`express`)
+const { MongoClient } = require(`mongodb`)
+require(`dotenv`).config()
 
 const typeDefs = readFileSync('./typeDefs.graphql', 'UTF-8')
 const resolvers = require('./resolvers')
@@ -50,7 +52,14 @@ let tags = [
 
 const startApolloServer = async (typeDefs, resolvers) => {
   const app = express()
-  const server = new ApolloServer({ typeDefs, resolvers })
+
+  const MONGO_DB = process.env.DB_HOST
+  const client = await MongoClient.connect(MONGO_DB, {  useNewUrlParser: true })
+  const db = client.db()
+
+  const context = { db }
+
+  const server = new ApolloServer({ typeDefs, resolvers, context })
   await server.start()
   server.applyMiddleware({ app })
 
