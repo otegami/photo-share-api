@@ -1,6 +1,31 @@
+const fetch = require('node-fetch')
 const { authorizeWithGithub } = require('../lib')
 
 module.exports = {
+  addFakeUsers: async (root, { count }, { db }) => {
+    let randomUserApi = `https://randomuser.me/api/?results=${count}`
+    console.log(randomUserApi)
+    let { results } = await fetch(randomUserApi).then(res => res.json())
+    let users = results.map(r => ({
+      githubLogin: r.login.username,
+      name: `${r.name.first} ${r.name.last}`,
+      avatar: r.picture.thumnail,
+      githubToken: r.login.sha1
+    }))
+
+    await db.collection('users').insertMany(users)
+
+    return users
+  },
+  fakeUserAuth: async (parent, { githubLogin }, { db }) => {
+    let user = await db.collection('users').findOne({ githubLogin })
+
+    if (!user) {
+      throw new Error(`Cannot find user with githubLogin ${githubLogin}`)
+    }
+
+    return { user, token: user.githubToken }
+  },
   postPhoto: async (parent, args, { db, currentUser }) => {
     if (!currentUser) {
       throw new Error('only an authorized user can post a photo')
