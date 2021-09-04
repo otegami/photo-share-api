@@ -7,3 +7,5 @@ const resolvers = {
   Mutation,
   ...Type
 }
+
+module.exports = resolvers
