@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+import fetch from 'node-fetch'
 
 const requestGithubToken = credentials => 
   fetch(
@@ -27,4 +27,4 @@ const authorizeWithGithub = async credentials => {
   return { ...githubUser, access_token }
 }
 
-module.exports = { authorizeWithGithub }
+export default authorizeWithGithub

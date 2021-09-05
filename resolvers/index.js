@@ -1,11 +1,24 @@
-const Query = require('./Query')
-const Mutation = require('./Mutation')
-const Type = require('./Type')
+import { me, totalPhotos, allPhotos, totalUsers, allUsers, } from './Query.js'
+import { addFakeUsers, fakeUserAuth, postPhoto, githubAuth } from './Mutation.js'
+import { Photo, User, DateTime } from './Type.js'
 
 const resolvers = {
-  Query,
-  Mutation,
-  ...Type
+  Query: {
+    me,
+    totalPhotos,
+    allPhotos,
+    totalUsers,
+    allUsers,
+  },
+  Mutation: {
+    addFakeUsers,
+    fakeUserAuth,
+    postPhoto,
+    githubAuth,
+  },
+  Photo,
+  User,
+  DateTime,
 }
 
-module.exports = resolvers
+export default resolvers
