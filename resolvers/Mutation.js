@@ -8,7 +8,7 @@ export const addFakeUsers = async (root, { count }, { db }) => {
   let users = results.map(r => ({
     githubLogin: r.login.username,
     name: `${r.name.first} ${r.name.last}`,
-    avatar: r.picture.thumnail,
+    avatar: r.picture.thumbnail,
     githubToken: r.login.sha1
   }))
 
